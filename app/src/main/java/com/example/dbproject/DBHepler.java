@@ -31,7 +31,7 @@ public class DBHepler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE if not exists " + COMMENT_TABLE + "("
                 + _colCommentId + " INTEGER PRIMARY KEY AUTOINCREMENT , "
-                + colCommentId + "TEXT,"
+                + colCommentId + " TEXT,"
                 + colCommentTitle + " TEXT ,"
                 + colCommentBody + " TEXT)"
         );
