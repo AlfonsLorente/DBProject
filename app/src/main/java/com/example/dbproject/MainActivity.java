@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private Spinner spinner;
 
+    private int selectedComment = 1;
 
     ArrayList<String> commentTitlesList = new ArrayList<>();
     ArrayList<CommentModel> comments = new ArrayList<>();
@@ -43,10 +44,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         eliminateButton = findViewById(R.id.eliminateButton);
         spinner = findViewById(R.id.commentSelector);
         spinner.setOnItemSelectedListener(this);
+        comments = dbHepler.getComments();
+        if (comments.size() == 0){
+            dbHepler.addComment(new CommentModel("0", "Example comment",
+                    "Example body"));
+        }
         updateSpinner();
+
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, commentTitlesList);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spinner.setAdapter(arrayAdapter);
+
         setButtonsListeners();
 
 
@@ -58,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 String title =  commentTitle.getText().toString();
                 if (title.equals("") ){
+                    Toast.makeText(getApplicationContext(),
+                            "No title found",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String body = commentBody.getText().toString();
@@ -79,7 +90,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
 
+        eliminateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = commentTitleShow.getText().toString();
+                if (title.equals("")){
+                    Toast.makeText(getApplicationContext(),
+                            "No commentari selected",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                dbHepler.removeComment(comments.get(selectedComment).idNumber);
+                updateSpinner();
+                spinner.setSelection(commentTitlesList.size()-1);
+                commentTitleShow.setText("");
+                commentBodyShow.setText("");
 
+
+            }
+        });
 
 
     }
@@ -102,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         commentTitleShow.setText(comments.get(position).title);
         commentBodyShow.setText(comments.get(position).body);
+        selectedComment = position;
 
     }
 
